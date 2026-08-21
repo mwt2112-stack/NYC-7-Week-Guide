@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Seven Weeks of Dining & Culture across New York City</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FDFBF7;
+    --paper-card: #FFFFFF;
+    --paper-accent: #F5F2EC;
+    --ink: #1C1A17;
+    --ink-light: #4A4741;
+    --ink-muted: #807B73;
+    --border-subtle: #E6E1D7;
+    --accent-red: #A8322D;
+    --accent-gold: #C59B27;
+
+    --cover-bg: #F8F5F0;
+    --cover-ink: #121110;
+    --cover-muted: #736E65;
+    --cover-gold: #B8860B;
+    --ease-out-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  body.theme-space-grey {
+    --paper: #121417;
+    --paper-card: #1C1F26;
+    --paper-accent: #252932;
+    --ink: #F0F2F5;
+    --ink-light: #C5CBD3;
+    --ink-muted: #8A94A0;
+    --border-subtle: #2D333F;
+    --accent-red: #FF6B6B;
+    --accent-gold: #FFD166;
+  }
+
+  body.theme-coffee {
+    --paper: #F5EFEB;
+    --paper-card: #FFFFFF;
+    --paper-accent: #EAE0D5;
+    --ink: #2C1A1D;
+    --ink-light: #4A3525;
+    --ink-muted: #7A6352;
+    --border-subtle: #D8C4B6;
+    --accent-red: #8C4A32;
+    --accent-gold: #C68B59;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 300ms var(--ease-out-smooth), color 300ms var(--ease-out-smooth);
+    overflow-x: hidden;
+  }
+
+  /* Cover Overlay */
+  .cover {
+    position: fixed; inset: 0;
+    background-color: var(--cover-bg);
+    z-index: 2000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 40px 24px;
+    color: var(--cover-ink);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    transition: opacity 350ms var(--ease-out-smooth), transform 350ms var(--ease-out-smooth), visibility 350ms ease;
+    border: 16px solid var(--paper);
+  }
+  .cover.open { opacity: 0; transform: scale(1.015); visibility: hidden; pointer-events: none; }
+  .cover-kicker { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--cover-gold); font-weight: 700; margin-bottom: 28px; }
+  .cover h2 { font-weight: 400; font-style: italic; font-size: clamp(42px, 7vw, 76px); line-height: 1.05; max-width: 15ch; }
+  .cover-rule { width: 48px; height: 1px; background: var(--cover-gold); margin: 36px 0 40px; opacity: 0.6; }
+  
+  .cover-seal { 
+    width: 76px; height: 76px; border-radius: 50%; border: 1px solid var(--cover-gold); cursor: pointer; 
+    background: var(--cover-bg); display: flex; align-items: center; justify-content: center; gap: 6px; 
+    animation: sealPulse 2s infinite ease-in-out; transition: all 300ms var(--ease-out-smooth);
+  }
+  .cover-seal:hover { background: var(--cover-ink); border-color: var(--cover-ink); animation: none; transform: scale(1.08); box-shadow: 0 0 20px rgba(0,0,0,0.15); }
+  .cover-seal:hover svg { stroke: var(--cover-bg); }
+
+  @keyframes sealPulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(184, 134, 11, 0.4); }
+    70% { transform: scale(1.06); box-shadow: 0 0 0 16px rgba(184, 134, 11, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(184, 134, 11, 0); }
+  }
+
+  .cover-hint { margin-top: 28px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--cover-muted); font-weight: 600; }
+
+  /* Main Container */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; opacity: 0; transform: translateY(8px); transition: all 300ms var(--ease-out-smooth) 50ms; }
+  body.loaded .container { opacity: 1; transform: translateY(0); }
+  header { padding: 56px 0 24px; text-align: center; }
+  .kicker { font-size: 11px; text-transform: uppercase; letter-spacing: 0.25em; font-weight: 700; color: var(--accent-red); margin-bottom: 12px; }
+  h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: clamp(42px, 6vw, 72px); font-weight: 600; line-height: 1.04; margin-bottom: 18px; }
+  .dek { font-family: 'Cormorant Garamond', Georgia, serif; font-size: clamp(19px, 2.2vw, 24px); font-style: italic; font-weight: 400; color: var(--ink-light); max-width: 780px; margin: 0 auto; margin-bottom: 24px; }
+
+  /* Shortcuts Hint */
+  .theme-shortcuts-hint {
+    position: fixed; bottom: 20px; right: 20px; z-index: 99;
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--paper-card); border: 1px solid var(--border-subtle);
+    padding: 8px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; color: var(--ink-muted);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  .kbd-badge { background: var(--paper-accent); border: 1px solid var(--border-subtle); color: var(--ink); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: 700; }
+
+  /* Navigation Bar */
+  .nav-filters {
+    display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 48px;
+    position: sticky; top: 16px; z-index: 100;
+    background: rgba(253, 251, 247, 0.94); backdrop-filter: blur(10px);
+    padding: 12px; border: 1px solid var(--border-subtle); border-radius: 30px;
+  }
+  body.theme-space-grey .nav-filters { background: rgba(18, 20, 23, 0.94); border-color: var(--border-subtle); }
+  body.theme-coffee .nav-filters { background: rgba(245, 239, 235, 0.94); border-color: var(--border-subtle); }
+  .filter-btn { background: var(--paper-card); border: 1px solid var(--border-subtle); color: var(--ink-light); padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 250ms; }
+  .filter-btn:hover, .filter-btn.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  
+  /* Quick Pick Accent Highlight */
+  .shuffle-pill { background: var(--accent-red); color: #FFFFFF; border-color: var(--accent-red); font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+  .shuffle-pill:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+  /* Cards */
+  .week-section { margin-bottom: 64px; scroll-margin-top: 100px; background: var(--paper-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 32px; }
+  .week-header { border-bottom: 2px solid var(--ink); padding-bottom: 14px; margin-bottom: 28px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
+  .week-heading { display: flex; flex-direction: column; }
+  .week-title { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 600; font-size: 44px; line-height: 1.0; color: var(--accent-red); }
+  .week-theme { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--ink-light); margin-top: 6px; max-width: 42ch; }
+  .week-subtitle { font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent-red); font-weight: 700; }
+  .calendar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+  .entry-card { background: var(--paper); border: 1px solid var(--border-subtle); border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; overflow: hidden; transition: transform 250ms, box-shadow 250ms; position: relative; }
+  .entry-card:hover { transform: translateY(-3px); border-color: var(--ink); box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
+  .card-badge { position: absolute; top: 14px; left: 14px; background: var(--ink); color: var(--paper); font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 700; padding: 4px 10px; border-radius: 3px; z-index: 2; }
+  .card-badge.weekend { background: var(--accent-red); }
+  .card-img-wrap { width: 100%; height: 240px; overflow: hidden; position: relative; background: var(--border-subtle); }
+  .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 300ms; }
+  .entry-card:hover .card-img-wrap img { transform: scale(1.03); }
+  .card-content { padding: 24px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
+  .card-header { border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; margin-bottom: 12px; }
+  .category-tag { font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; font-weight: 700; color: var(--ink-muted); margin-bottom: 4px; display: block; }
+  .entry-title { font-family: 'Playfair Display', Georgia, serif; font-size: 24px; font-weight: 700; line-height: 1.2; margin-bottom: 4px; }
+  .entry-address { font-size: 12px; color: var(--ink-muted); font-style: italic; }
+  .card-description { font-size: 13px; color: var(--ink-light); line-height: 1.45; margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-description-fix { display: block !important; }
+  .card-footer { border-top: 1px dashed var(--border-subtle); padding-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; }
+  
+  .front-map-link { color: var(--accent-red); text-decoration: none; position: relative; z-index: 5; transition: color 150ms ease; }
+  .front-map-link:hover { color: var(--ink); text-decoration: underline; }
+
+  /* Modals */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 250ms; }
+  .modal-overlay.active { opacity: 1; pointer-events: auto; }
+  .modal-content { background: var(--paper); border: 2px solid var(--ink); width: min(720px, 100%); max-height: 88vh; overflow-y: auto; position: relative; border-radius: 4px; }
+  .modal-hero-img { width: 100%; height: 340px; object-fit: cover; }
+  .modal-body { padding: 36px; }
+  .modal-close-x { position: absolute; top: 16px; right: 20px; background: var(--paper); border: 1px solid var(--ink); width: 36px; height: 36px; border-radius: 50%; font-size: 20px; cursor: pointer; color: var(--ink); display: flex; align-items: center; justify-content: center; z-index: 10; }
+  .modal-title { font-family: 'Playfair Display', Georgia, serif; font-size: 36px; font-weight: 700; margin: 8px 0 4px; line-height: 1.15; }
+  .modal-meta { font-size: 13px; color: var(--ink-muted); border-bottom: 1px solid var(--border-subtle); padding-bottom: 16px; margin-bottom: 24px; }
+  .editorial-section { margin-bottom: 24px; }
+  .editorial-section h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent-red); margin-bottom: 10px; font-weight: 700; }
+  .editorial-section ul { list-style: none; }
+  .editorial-section ul li { font-size: 15px; color: var(--ink-light); line-height: 1.6; margin-bottom: 10px; position: relative; padding-left: 18px; }
+  .editorial-section ul li::before { content: "—"; position: absolute; left: 0; color: var(--accent-red); }
+
+  /* Scramble State Styling */
+  .scrambling { color: var(--accent-red) !important; opacity: 0.6; filter: blur(1px); transition: all 50ms ease; }
+
+  footer { border-top: 1px solid var(--border-subtle); padding: 48px 0 64px; text-align: center; background: var(--paper-accent); margin-top: 40px; }
+  footer p { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-style: italic; color: var(--ink-light); margin-bottom: 8px; }
+  footer span { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--ink-muted); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- Cover Overlay -->
+<div class="cover" id="cover">
+  <p class="cover-kicker">An Editorial Collection</p>
+  <h2>Seven Weeks of Dining & Culture across New York City</h2>
+  <div class="cover-rule"></div>
+  <button class="cover-seal" id="coverSeal" aria-label="Open calendar">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8860B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zM8 2v5M16 2v5"/></svg>
+  </button>
+  <p class="cover-hint">Begin Exploration</p>
+</div>
+
+<div class="container">
+  <header>
+    <p class="kicker">Curated NYC Itinerary</p>
+    <h1>Weekly Dining & Weekend Events</h1>
+    <p class="dek">A curated editorial guide pairing iconic weeknight dining destinations across Manhattan with curated weekend cultural events, neighborhood strolls, and nightlife outings.</p>
+  </header>
+
+  <!-- Navigation Bar with Quick Pick Shuffle -->
+  <nav class="nav-filters" id="filterNav">
+    <button class="filter-btn active" onclick="scrollToSection('all')">Full Calendar</button>
+    <button class="filter-btn" onclick="scrollToSection('week-1')">Week 1</button>
+    <button class="filter-btn" onclick="scrollToSection('week-2')">Week 2</button>
+    <button class="filter-btn" onclick="scrollToSection('week-3')">Week 3</button>
+    <button class="filter-btn" onclick="scrollToSection('week-4')">Week 4</button>
+    <button class="filter-btn" onclick="scrollToSection('week-5')">Week 5</button>
+    <button class="filter-btn" onclick="scrollToSection('week-6')">Week 6</button>
+    <button class="filter-btn" onclick="scrollToSection('week-7')">Week 7</button>
+    <button class="filter-btn shuffle-pill" onclick="triggerShuffle()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+      Quick Pick Shuffle
+    </button>
+  </nav>
+
+  <main id="mainContainer"></main>
+</div>
+
+<div class="theme-shortcuts-hint">
+  <span><span class="kbd-badge">B</span> Space Grey</span>
+  <span><span class="kbd-badge">C</span> Coffee</span>
+  <span><span class="kbd-badge">Esc</span> Reset</span>
+</div>
+
+<!-- Modal Overlay -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-content" id="modalContent"></div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>Curated New York City Calendar & Neighborhood Guide</p>
+    <span>Editorial Calendar Edition</span>
+  </div>
+</footer>
+
+<script>
+const cover = document.getElementById('cover');
+document.body.style.overflow = 'hidden';
+
+document.getElementById('coverSeal').addEventListener('click', () => {
+  cover.classList.add('open');
+  document.body.classList.add('loaded');
+  document.body.style.overflow = '';
+});
+
+const SHUFFLE_POOL = [
+  { name: "Anixi", vibe: "Upscale Mediterranean Vegan", area: "Chelsea", mapUrl: "https://maps.google.com/?q=Anixi+NYC" },
+  { name: "Tasca", vibe: "Spanish & Caribbean Fine Dining", area: "Upper West Side", mapUrl: "https://maps.google.com/?q=Tasca+NYC" },
+  { name: "Jazz at Lincoln Center", vibe: "World Class Iconic Jazz Lounge", area: "Columbus Circle", mapUrl: "https://maps.google.com/?q=Jazz+at+Lincoln+Center+NYC" },
+  { name: "COTE Korean Steakhouse", vibe: "Michelin Star Premium BBQ", area: "Flatiron", mapUrl: "https://maps.google.com/?q=COTE+Korean+Steakhouse+NYC" },
+  { name: "Spicy Moon", vibe: "Szechuan Vegan Sensation", area: "Bowery / West Village", mapUrl: "https://maps.google.com/?q=Spicy+Moon+NYC" },
+  { name: "No More Cafe", vibe: "Precision Espresso & Artisanal Mid-Week Bakery", area: "East Village", mapUrl: "https://maps.google.com/?q=No+More+Cafe+NYC" },
+  { name: "Ci Siamo", vibe: "Wood-fired Live Cooked Italian", area: "Manhattan West", mapUrl: "https://maps.google.com/?q=Ci+Siamo+NYC" },
+  { name: "Pio Pio 8", vibe: "Authentic Peruvian Rotisserie Chicken", area: "Hell's Kitchen", mapUrl: "https://maps.google.com/?q=Pio+Pio+8+NYC" },
+  { name: "Birria LES", vibe: "Famous Melted Cheese Birria Tacos", area: "Lower East Side", mapUrl: "https://maps.google.com/?q=Birria+LES+NYC" },
+  { name: "Tomino Taberna Gallega", vibe: "Galician Tapas & Seafood", area: "Little Italy", mapUrl: "https://maps.google.com/?q=Tomino+Taberna+Gallega+NYC" },
+  { name: "Moon Kee", vibe: "Traditional Cantonese Roasts", area: "Chinatown", mapUrl: "https://maps.google.com/?q=Moon+Kee+NYC" },
+  { name: "Carmine's", vibe: "Family Style Classic Italian Feast", area: "Times Square", mapUrl: "https://maps.google.com/?q=Carmines+NYC" },
+  { name: "Melba's", vibe: "Harlem Comfort Soul Food Landmark", area: "Harlem", mapUrl: "https://maps.google.com/?q=Melbas+Harlem+NYC" },
+  { name: "Ayat", vibe: "Acclaimed Palestinian Bistro Bistro", area: "East Village", mapUrl: "https://maps.google.com/?q=Ayat+NYC" },
+  { name: "Banh", vibe: "Authentic Northern Vietnamese Fare", area: "Upper West Side (107th St)", mapUrl: "https://maps.google.com/?q=Banh+NYC+107th" },
+  { name: "Mala Town", vibe: "Custom Spicy Hot Pot Bowls", area: "East Village", mapUrl: "https://maps.google.com/?q=Mala+Town+NYC" },
+  { name: "Dim Sum Bloom", vibe: "Fresh Pillowy Dumplings & Teas", area: "Midtown", mapUrl: "https://maps.google.com/?q=Dim+Sum+Bloom+NYC" },
+  { name: "Massawa", vibe: "Historic Eritrean & Ethiopian Diner", area: "Morningside Heights", mapUrl: "https://maps.google.com/?q=Massawa+NYC" },
+  { name: "Willow Vegan Bistro", vibe: "Chic American Plant-Based Plates", area: "Chelsea", mapUrl: "https://maps.google.com/?q=Willow+Vegan+Bistro+NYC" },
+  { name: "La Lanterna di Vittorio", vibe: "Romantic Lantern-lit Garden Italian", area: "Greenwich Village", mapUrl: "https://maps.google.com/?q=La+Lanterna+di+Vittorio+NYC" },
+  { name: "St. Tropez", vibe: " Cozy French Wine Bar & Brasserie", area: "West Village", mapUrl: "https://maps.google.com/?q=St+Tropez+West+Village+NYC" },
+  { name: "Sushi Tokoro", vibe: "Intimate High Quality Sushi Counter", area: "Midtown", mapUrl: "https://maps.google.com/?q=Sushi+Tokoro+NYC" },
+  { name: "Dominique Ansel Bakery", vibe: "Home of the Famous Cronut", area: "SoHo", mapUrl: "https://maps.google.com/?q=Dominique+Ansel+Bakery+NYC" },
+  { name: "PLANTA Queen", vibe: "Inventive Plant-Based Asian Culinary", area: "NoMad", mapUrl: "https://maps.google.com/?q=PLANTA+Queen+NYC" },
+  { name: "Catch NYC", vibe: "High Energy Multi-level Seafood", area: "Meatpacking District", mapUrl: "https://maps.google.com/?q=Catch+NYC" },
+  { name: "Chelsea Market", vibe: "Historic Food Hall & Vendor Stalls", area: "Chelsea", mapUrl: "https://maps.google.com/?q=Chelsea+Market+NYC" },
+  { name: "Time Out Market", vibe: "Waterfront Culinary & Cocktail Hub", area: "DUMBO Brooklyn", mapUrl: "https://maps.google.com/?q=Time+Out+Market+New+York" },
+  { name: "Wolfnights", vibe: "Late Night Creative Gourmet Wraps", area: "Lower East Side", mapUrl: "https://maps.google.com/?q=Wolfnights+NYC" },
+  { name: "Gaonnuri", vibe: "Penthouse Sky Lounge Korean BBQ", area: "Koreatown", mapUrl: "https://maps.google.com/?q=Gaonnuri+NYC" },
+  { name: "Casa Ora", vibe: "Refined Venezuelan Plates & Cocktails", area: "Brooklyn", mapUrl: "https://maps.google.com/?q=Casa+Ora+NYC" },
+  { name: "Blue Note Jazz Club", vibe: "World Famous Legendary Jazz House", area: "Greenwich Village", mapUrl: "https://maps.google.com/?q=Blue+Note+Jazz+Club+NYC" },
+  { name: "La Grande Boucherie", vibe: "Stunning Art Nouveau French Oasis", area: "Midtown West", mapUrl: "https://maps.google.com/?q=La+Grande+Boucherie+NYC" },
+  { name: "Felice 56", vibe: "Tuscan Wine Bar & Florentine Plates", area: "Midtown East", mapUrl: "https://maps.google.com/?q=Felice+56+NYC" },
+  { name: "The Frick Collection", vibe: "Gilded Age Fine Arts Mansion", area: "Upper East Side", mapUrl: "https://maps.google.com/?q=The+Frick+Collection+NYC" },
+  { name: "5 Napkin Burger", vibe: "Indulgent Gourmet Custom Burgers", area: "Hell's Kitchen", mapUrl: "https://maps.google.com/?q=5+Napkin+Burger+NYC" }
+];
+
+const WEEKS = [
+  {
+    id: "week-1", weekNum: "Week 1", theme: "Modern Tapas & Japanese Speakeasy Jazz",
+    weekday: { id: 101, type: "Weekday Feature", name: "Debajo", area: "31 W 27th St (NoMad)", catLabel: "Spanish Tapas", highlight: "Croquetas & Sangria", vibe: "Warm & Chic", img: "https://tock-public.imgix.net/imagesprod/user_uploaded_images_v1/44e119056c490d81d3981be8c8cedbed.jpg?auto=format&fit=crop&w=1200&q=80", mapUrl: "https://maps.app.goo.gl/fiW7oFnWDDMEwAKP9", notes: "Modern Spanish tapas in an intimate, moody setting inside NoMad.", details: ["Crispy Jamón croquettes with garlic aioli.", "Craft cocktails and Spanish gin tonics.", "Ideal for small group gatherings."] },
+    weekend: { id: 102, type: "Weekend Pairing", name: "Tomi Jazz", area: "239 E 53rd St (Midtown East)", catLabel: "Japanese Jazz Bar", highlight: "Live Jazz & Omurice", vibe: "Intimate Speakeasy", img: "https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&w=800&q=80", mapUrl: "https://maps.google.com/?q=Tomi+Jazz+NYC", notes: "Hidden basement Japanese jazz bar with acoustic sets and comfort food.", details: ["Arrive early to beat the line.", "Signature Japanese Omurice and highballs.", "Vintage retro ambiance."] }
+  },
+  {
+    id: "week-2", weekNum: "Week 2", theme: "Intimate Bites & Classical Echoes",
+    weekday: { id: 201, type: "Weekday Feature", name: "LALYN", area: "West Village / Chelsea", catLabel: "Bistro & Cocktail Bar", highlight: "Artisanal Small Plates", vibe: "Cozy & Stylish", img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800&q=80", mapUrl: "https://maps.app.goo.gl/DoxpukGQfth4d36A8", notes: "Stylish bistro focused on local seasonality and natural wines.", details: ["House-made flatbreads.", "Curated natural wine list.", "Candlelit romantic setting."] },
+    weekend: { id: 202, type: "Weekend Pairing", name: "Lincoln Center Symphony", area: "Upper West Side", catLabel: "Performing Arts", highlight: "Philharmonic Performance", vibe: "Refined & Elevated", img: "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=800&q=80", mapUrl: "https://maps.google.com/?q=Lincoln+Center+NYC", notes: "High Line stroll followed by an evening concert at David Geffen Hall.", details: ["Sunset walk from Chelsea.", "Evening performance at Lincoln Center.", "Nightcap drinks nearby."] }
+  },
+  {
+    id: "week-3", weekNum: "Week 3", theme: "MICHELIN Spanish Roots & Literary Walks",
+    weekday: { id: 401, type: "Weekday Feature", name: "Casa Mono", area: "52 E 17th St (Gramercy)", catLabel: "MICHELIN Tapas", highlight: "Razor Clams on Plancha", vibe: "Rustic & Historic", img: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=80", mapUrl: "https://maps.app.goo.gl/jwKt2qK5UUx3ogEKA", notes: "MICHELIN-starred Spanish tapas institution with extensive Rioja cellars.", details: ["Fresh garlic razor clams.", "World-class Sherry list.", "Gramercy park views."] },
+    weekend: { id: 402, type: "Weekend Pairing", name: "The Strand & Washington Square", area: "Greenwich Village", catLabel: "Literary & Music Walk", highlight: "Rare Books & Park Jazz", vibe: "Bohemian & Classic", img: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=800&q=80", mapUrl: "https://maps.google.com/?q=Strand+Bookstore+NYC", notes: "Browse 18 miles of books at The Strand before afternoon jazz at the arch.", details: ["Third floor Rare Book Room.", "Espresso along Fifth Ave.", "Live street musician performances."] }
+  },
+  {
+    id: "week-4", weekNum: "Week 4", theme: "Crispy Nori Handrolls & Museum Nights",
+    weekday: { id: 601, type: "Weekday Feature", name: "KazuNori", area: "15 W 28th St (NoMad)", catLabel: "Hand Roll Bar", highlight: "Warm Rice Nori Rolls", vibe: "Sleek & Fast", img: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=80", mapUrl: "https://maps.app.goo.gl/TVcLdPAyaQR38TDV7", notes: "Original counter dedicated to warm sushi rice and crisp nori hand rolls.", details: ["5 or 6-roll set menus.", "Crisp seaweed and fresh fish.", "Quick counter service."] },
+    weekend: { id: 602, type: "Weekend Pairing", name: "Metropolitan Opera", area: "Upper West Side", catLabel: "Opera & Central Park", highlight: "The Met Gala Production", vibe: "Grand & Romantic", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Facade_of_the_Metropolitan_Opera_House_at_Lincoln_Center,_NYC.jpg?width=1000", mapUrl: "https://maps.google.com/?q=Metropolitan+Opera+NYC", notes: "Bethesda Terrace promenade walk paired with grand opera at Lincoln Center.", details: ["Central Park Ramble walk.", "Drinks before curtain call.", "World-class vocal performance."] }
+  },
+  {
+    id: "week-5", weekNum: "Week 5", theme: "Rich Tonkotsu & Brooklyn Markets",
+    weekday: { id: 501, type: "Weekday Feature", name: "Ippudo", area: "65 4th Ave (East Village)", catLabel: "Artisanal Ramen", highlight: "Akamaru Tonkotsu Ramen", vibe: "Energetic & Aromatic", img: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80", mapUrl: "https://maps.google.com/?q=Ippudo+NYC", notes: "Global benchmark for tonkotsu broth ramen and steamed pork buns.", details: ["Steamed Hirata pork buns.", "Rich umami miso ramen.", "Cozy weeknight option."] },
+    weekend: { id: 502, type: "Weekend Pairing", name: "Brooklyn Flea Market", area: "DUMBO (Archway under Manhattan Bridge)", catLabel: "Vintage Market & Stroll", highlight: "Vintage Finds & Skyline Views", vibe: "Bustling & Creative", img: "https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&w=800&q=80", mapUrl: "https://maps.google.com/?q=Brooklyn+Flea+DUMBO", notes: "Hunt for exceptional antique goods and retro fashion beneath the DUMBO tracks.", details: ["Dozens of curated vintage and craft vendors.", "Sensational waterfront views of the Manhattan skyline.", "Perfect pairing with a walk across the Brooklyn Bridge."] }
+  },
+  {
+    id: "week-6", weekNum: "Week 6", theme: "Creole Comfort & Modern Art Masterpieces",
+    weekday: { id: 801, type: "Weekday Feature", name: "File Gumbo Bar", area: "275 Church St (Tribeca / Kips Bay)", catLabel: "Southern Creole Kitchen", highlight: "Signature Seafood Gumbo", vibe: "Soulful & Sophisticated", img: "https://cdn.apartmenttherapy.info/image/upload/f_auto,q_auto:eco,c_fill,g_auto,w_1500,ar_3:2/k%2FPhoto%2FRecipes%2F2022-12-seafood-gumbo%2Fseafood-gumbo-002", mapUrl: "https://www.google.com/maps/place/Fil%C3%A9+Gumbo+Bar/@40.718495,-74.0074147,17z/data=!3m1!4b1!4m6!3m5!1s0x89c25b3c7dfbe44d:0x238f96ba0ed1f074!8m2!3d40.718491!4d-74.0048398!16s%2Fg%2F11rxq1n72b?entry=ttu&g_ep=EgoyMDI2MDgxNy4wIKXMDSoASAFQAw%3D%3D", notes: "An elevated Southern experience celebrating rich Louisiana flavors and tableside gumbo customization.", details: ["Rich roux bases simmered meticulously with okra and sausage.", "Fresh prawns and seasoned Atlantic seafood inclusions.", "Excellent pairing with classic craft cocktails."] },
+    weekend: { id: 802, type: "Weekend Pairing", name: "The Museum of Modern Art (MoMA)", area: "11 W 53rd St (Midtown West)", catLabel: "Modern Art & Walk", highlight: "Starry Night & Sculpture Garden", vibe: "Avant-Garde & World-Class", img: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80", mapUrl: "https://maps.google.com/?q=MoMA+NYC", notes: "Immerse yourself in world-changing modern masterpieces before taking a reflective stroll through the Abby Aldrich Rockefeller Sculpture Garden.", details: ["View iconic works by Van Gogh, Picasso, and Warhol.", "Relax by the fountains in the outdoor sculpture courtyard.", "Perfect midtown cultural pairing."] }
+  },
+  {
+    id: "week-7", weekNum: "Week 7", theme: "Morningside Heights Wine & Botanical Gardens",
+    weekday: { id: 701, type: "Weekday Feature", name: "Elis Wine Bar", area: "1012 Amsterdam Ave (110th St)", catLabel: "Wine Bar & Restaurant", highlight: "Curated Mediterranean & Wine", vibe: "Cozy & Vibrant", img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800&q=80", mapUrl: "https://maps.google.com/?q=Elis+Wine+Bar+1012+Amsterdam+Ave+NYC", notes: "Cozy neighborhood spot near Columbia serving small plates and curated wines.", details: ["Mediterranean small plates.", "Expansive wine list by glass or bottle.", "Inviting patio and grand bar."] },
+    weekend: { id: 702, type: "Weekend Pairing", name: "NY Botanical Garden", area: "The Bronx", catLabel: "Conservatory & Dining", highlight: "Orchid Glasshouse", vibe: "Abundant & Historic", img: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80", mapUrl: "https://maps.google.com/?q=NYBG+Bronx", notes: "Explore Enid A. Haupt Conservatory followed by Arthur Ave Italian delis.", details: ["Glasshouse botanical gardens.", "Arthur Avenue mozzarella & pasta.", "Unforgettable weekend trip."] }
+  }
+];
+
+const mainContainer = document.getElementById('mainContainer');
+const overlay = document.getElementById('modalOverlay');
+const modalContent = document.getElementById('modalContent');
+
+function handleCardClick(e, id) {
+  if (e.target.closest('.front-map-link')) return;
+  openModalById(id);
+}
+
+function triggerShuffle() {
+  modalContent.innerHTML = `
+    <button class="modal-close-x" onclick="closeModal()">&times;</button>
+    <div class="modal-body" style="padding: 44px 36px; text-align: center;">
+      <span class="category-tag" style="color:var(--accent-gold); letter-spacing: 0.25em;">⚡ Quick Pick Selection</span>
+      <h2 class="modal-title scrambling" id="scrambleTitle" style="font-size:40px; margin-top:12px;">Shuffling...</h2>
+      <p id="scrambleVibe" style="font-family:'Playfair Display', serif; font-style:italic; font-size:18px; color:var(--ink-muted); margin:12px 0 24px;">
+        Analyzing spots...
+      </p>
+      <p class="entry-address" id="scrambleArea" style="font-size:14px; margin-bottom:32px; visibility:hidden;">📍 Neighborhood Focus: -</p>
+      <div id="scrambleControls" style="display:flex; justify-content:center; gap:12px; opacity: 0.3; pointer-events: none;">
+        <button class="filter-btn">Shuffle Again</button>
+        <button class="filter-btn active">View Maps ↗</button>
+      </div>
+    </div>`;
+  
+  overlay.classList.add('active');
+
+  const titleEl = document.getElementById('scrambleTitle');
+  const vibeEl = document.getElementById('scrambleVibe');
+  const areaEl = document.getElementById('scrambleArea');
+  const controlsEl = document.getElementById('scrambleControls');
+
+  let duration = 0;
+  const maxDuration = 1000;
+  const speedInterval = 60;
+
+  const intervalId = setInterval(() => {
+    const randomTemp = SHUFFLE_POOL[Math.floor(Math.random() * SHUFFLE_POOL.length)];
+    titleEl.textContent = randomTemp.name;
+    vibeEl.textContent = `"${randomTemp.vibe}"`;
+    
+    duration += speedInterval;
+    if (duration >= maxDuration) {
+      clearInterval(intervalId);
+      
+      const finalSelection = SHUFFLE_POOL[Math.floor(Math.random() * SHUFFLE_POOL.length)];
+      
+      titleEl.textContent = finalSelection.name;
+      titleEl.classList.remove('scrambling');
+      vibeEl.textContent = `"${finalSelection.vibe}"`;
+      vibeEl.style.color = "var(--ink-light)";
+      
+      areaEl.textContent = `📍 Neighborhood Focus: ${finalSelection.area}`;
+      areaEl.style.visibility = "visible";
+      
+      controlsEl.style.opacity = "1";
+      controlsEl.style.pointerEvents = "auto";
+      controlsEl.innerHTML = `
+        <button class="filter-btn" onclick="triggerShuffle()">Shuffle Again</button>
+        <a href="${finalSelection.mapUrl}" target="_blank" class="filter-btn active" style="text-decoration:none;">View Maps ↗</a>
+      `;
+    }
+  }, speedInterval);
+}
+
+function renderCalendar() {
+  mainContainer.innerHTML = '';
+  WEEKS.forEach(wk => {
+    const secEl = document.createElement('section');
+    secEl.className = 'week-section';
+    secEl.id = wk.id;
+    secEl.innerHTML = `
+      <div class="week-header"><div class="week-heading"><h2 class="week-title">${wk.weekNum}</h2><p class="week-theme">${wk.theme}</p></div><span class="week-subtitle">Featured Destination & Weekend Pairing</span></div>
+      <div class="calendar-grid">
+        <article class="entry-card" onclick="handleCardClick(event, ${wk.weekday.id})">
+          <div class="card-img-wrap"><span class="card-badge">Weekday Dining</span><img src="${wk.weekday.img}" alt="${wk.weekday.name}" loading="lazy" onerror="this.style.opacity=0"/></div>
+          <div class="card-content">
+            <div class="card-header"><span class="category-tag">${wk.weekday.catLabel}</span><h3 class="entry-title">${wk.weekday.name}</h3><p class="entry-address">${wk.weekday.area}</p></div>
+            <p class="card-description card-description-fix">${wk.weekday.notes}</p>
+            <div class="card-footer">
+              <a href="${wk.weekday.mapUrl}" target="_blank" class="front-map-link" title="See actual photos and location">📍 View Photos/Map ↗</a>
+              <span>Details →</span>
+            </div>
+          </div>
+        </article>
+        <article class="entry-card" onclick="handleCardClick(event, ${wk.weekend.id})">
+          <div class="card-img-wrap"><span class="card-badge weekend">Weekend Event</span><img src="${wk.weekend.img}" alt="${wk.weekend.name}" loading="lazy" onerror="this.style.opacity=0"/></div>
+          <div class="card-content">
+            <div class="card-header"><span class="category-tag">${wk.weekend.catLabel}</span><h3 class="entry-title">${wk.weekend.name}</h3><p class="entry-address">${wk.weekend.area}</p></div>
+            <p class="card-description card-description-fix">${wk.weekend.notes}</p>
+            <div class="card-footer">
+              <a href="${wk.weekend.mapUrl}" target="_blank" class="front-map-link" title="See actual photos and location">📍 View Photos/Map ↗</a>
+              <span>Details →</span>
+            </div>
+          </div>
+        </article>
+      </div>`;
+    mainContainer.appendChild(secEl);
+  });
+}
+
+function findSpotById(id) {
+  for (let wk of WEEKS) {
+    if (wk.weekday.id === id) return wk.weekday;
+    if (wk.weekend.id === id) return wk.weekend;
+  }
+  return null;
+}
+
+function openModalById(id) {
+  const item = findSpotById(id);
+  if (!item) return;
+  modalContent.innerHTML = `
+    <button class="modal-close-x" onclick="closeModal()">&times;</button>
+    <img src="${item.img}" class="modal-hero-img" alt="${item.name}" />
+    <div class="modal-body">
+      <span class="category-tag">${item.catLabel} • ${item.type}</span>
+      <h2 class="modal-title">${item.name}</h2>
+      <p class="modal-meta">${item.area} • <strong>Highlight: ${item.highlight}</strong></p>
+      <div class="editorial-section"><h4>Overview</h4><p style="font-size:15px; color:var(--ink-light);">${item.notes}</p></div>
+      <div class="editorial-section"><h4>Key Details</h4><ul>${item.details.map(d => `<li>${d}</li>`).join('')}</ul></div>
+      <a href="${item.mapUrl}" target="_blank" class="filter-btn active" style="display:inline-block; text-decoration:none;">Open Google Maps ↗</a>
+    </div>`;
+  overlay.classList.add('active');
+}
+
+function closeModal() { overlay.classList.remove('active'); }
+overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+function scrollToSection(sectionId) {
+  if (sectionId === 'all') window.scrollTo({ top: 0, behavior: 'smooth' });
+  else document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+}
+
+document.addEventListener('keydown', (e) => {
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+  const key = e.key.toLowerCase();
+  if (key === 'b') {
+    document.body.className = document.body.classList.contains('loaded') ? 'loaded theme-space-grey' : 'theme-space-grey';
+  } else if (key === 'c') {
+    document.body.className = document.body.classList.contains('loaded') ? 'loaded theme-coffee' : 'theme-coffee';
+  } else if (e.key === 'Escape') {
+    document.body.className = document.body.classList.contains('loaded') ? 'loaded' : '';
+    closeModal();
+  }
+});
+
+renderCalendar();
+</script>
+</body>
+</html>
